@@ -53,6 +53,24 @@ const user_delete_by_id = async (req, res) => {
   }
 };
 
+const get_user_detail_by_ID = async (req, res) => {
+  const user_id = req.user.id;
+  if (!user_id)
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: "User Id not found" });
+
+  try {
+    const result = await userRepo.find_User_By_Id(user_id);
+
+    res.status(StatusCodes.OK).json({ message: "user Found", data: result });
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: error.message, data: {} });
+  }
+};
+
 const update_user_detail = async (req, res) => {
   const userId = req.params.userid;
   const { name, email, phoneno, address, age, gender } = req.body;
@@ -77,4 +95,5 @@ module.exports = {
   user_delete_by_id,
   get_all_users,
   update_user_detail,
+  get_user_detail_by_ID,
 };

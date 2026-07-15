@@ -20,4 +20,9 @@ Userroutes.put(
   userController.update_user_detail,
 );
 
+Userroutes.get(
+  "/getUserById",
+  authenticatJWT,
+  userController.get_user_detail_by_ID,
+);
 module.exports = Userroutes;

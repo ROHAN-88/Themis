@@ -30,6 +30,12 @@ const findAllUsers = async () => {
   return rows;
 };
 
+const find_User_By_Id = async (id) => {
+  const query = `SELECT * FROM users WHERE id =$1`;
+  const { rows } = await db.query(query, [id]);
+  return rows;
+};
+
 const delete_user_by_id = async (id) => {
   const query = `DELETE FROM users WHERE id = $1`;
   await db.query(query, [id]);
@@ -64,4 +70,5 @@ module.exports = {
   findAllUsers,
   delete_user_by_id,
   update_user_detail,
+  find_User_By_Id,
 };
