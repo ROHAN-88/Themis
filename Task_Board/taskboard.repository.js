@@ -9,7 +9,7 @@ const get_all_task = async () => {
 };
 
 const create_task_query = async (values, created_user_id) => {
-  const query = `INSERT INTO tasks (tasks_name,description,priority,created_by,assignee_to,status) VALUES ($1,$2,$3,$4,$5,$6);`;
+  const query = `INSERT INTO tasks (task_name,description,priority,created_by,assignee_to,status) VALUES ($1,$2,$3,$4,$5,$6);`;
 
   const { task_name, description, priority, assignee_to, status } = values;
 
@@ -25,18 +25,31 @@ const create_task_query = async (values, created_user_id) => {
   return result;
 };
 
-const update_task_query = async (values, task_id) => {
-  const query = `UPDATE tasks set tasks_name=$1,description = $2 ,priority=$3,created_by=$4,assignee_to=$5,status=$6) WHERE id = $7`;
+const update_task_query = async (values, task_id, update_user_id) => {
+  console.log(values, update_user_id, task_id);
+  const query = `UPDATE tasks set task_name=$1,description = $2 ,priority=$3,updated_by=$4,assignee_to=$5,status=$6 WHERE id = $7;`;
+  console.log(query);
   const results = await db.query(query, [
-    values.tasks_name,
+    values.task_name,
     values.description,
     values.priority,
-    values.created_by,
+    update_user_id.id,
     values.assignee_to,
     values.status,
     task_id,
   ]);
+  console.log(results);
   return results;
 };
 
-module.exports = { create_task_query, update_task_query, get_all_task };
+const archive_Task = async (task_id, value) => {
+  const query = `UPDATE tasks set is_archived = $1 where id = $2;`;
+  await db.query(query, [value.is_archived, task_id]);
+};
+
+module.exports = {
+  create_task_query,
+  update_task_query,
+  get_all_task,
+  archive_Task,
+};

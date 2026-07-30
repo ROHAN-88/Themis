@@ -2,6 +2,7 @@ const express = require("express");
 const task_repository = require("./taskboard.repository");
 const { StatusCodes } = require("http-status-codes");
 const task_board_Schema = require("./taskboard.validation");
+const { boolean } = require("joi");
 
 const task_getall_controller = async (req, res) => {
   try {
@@ -46,7 +47,9 @@ const task_create_controller = async (req, res) => {
 const task_update_controller = async (req, res) => {
   const body_values = req.body;
   const task_id = req.params.taskid;
-  if (!body_values || task_id)
+  const update_user_id = req.user;
+
+  if (!body_values || !task_id)
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ message: "No data found", data: {} });
@@ -58,7 +61,11 @@ const task_update_controller = async (req, res) => {
         .status(StatusCodes.BAD_REQUEST)
         .json({ message: "Validation Error", data: {} });
 
-    await task_repository.update_task_query(body_values, task_id);
+    await task_repository.update_task_query(
+      body_values,
+      task_id,
+      update_user_id,
+    );
 
     return res
       .status(StatusCodes.OK)
@@ -66,7 +73,27 @@ const task_update_controller = async (req, res) => {
   } catch (error) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ message: "Error", error: error });
+      .json({ message: "Error", error: error.message });
+  }
+};
+
+const archive_task = async (req, res) => {
+  const task_id = req.params.task_id;
+  const archive_boolean = req.body;
+  if (!archive_boolean || !task_id) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: "No Boolean was passed", data: {} });
+  }
+  try {
+    await task_repository.archive_Task(task_id, archive_boolean);
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: "task Updated", data: {} });
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Could not update Task archive", error: error });
   }
 };
 
@@ -74,4 +101,5 @@ module.exports = {
   task_create_controller,
   task_update_controller,
   task_getall_controller,
+  archive_task,
 };

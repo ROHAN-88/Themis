@@ -6,7 +6,7 @@ const Userroutes = express.Router();
 
 Userroutes.get("/getUsers", authenticateJWT, userController.get_all_users);
 
-Userroutes.post("/createUser", authenticateJWT, userController.user_create_api);
+Userroutes.post("/createUser", userController.user_create_api);
 
 Userroutes.delete(
   "/deleteUser/:userid",
