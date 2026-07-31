@@ -1,7 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const jwt = require("jsonwebtoken");
 
-const authenticatJWT = async (req, res, next) => {
+const authenticateJWT = async (req, res, next) => {
   const token = req.header("Authorization");
 
   if (!token)
@@ -21,4 +21,4 @@ const authenticatJWT = async (req, res, next) => {
   });
 };
 
-module.exports = { authenticatJWT };
+module.exports = { authenticateJWT };

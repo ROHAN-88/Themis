@@ -27,13 +27,25 @@ const login = async (req, res) => {
     const token = jwt.sign({ id: user_detail.id }, process.env.SECRET_KEY, {
       expiresIn: "1h",
     });
+    const refresh_token = jwt.sign(
+      { id: user_detail.id, email: user_detail.email },
+      process.env.REFRESH_SECRET_JWT_KEY,
+      { expiresIn: "1d" },
+    );
+
+    res.cookie("refreshToken", refresh_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
 
     return res.status(200).json({
       message: "Logged Successfully",
       data: {
-        jwt_token: token,
-        email: user_detail.email,
         id: user_detail.id,
+        email: user_detail.email,
+        jwt_token: token,
       },
     });
   } catch (error) {
