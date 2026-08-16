@@ -2,7 +2,7 @@ const { express } = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { StatusCodes } = require("http-status-codes");
-const { user_login } = require("./auth.repository");
+const { user_login, user_signup_repository } = require("./auth.repository");
 const { user_login_schema } = require("./auth.validation");
 
 const login = async (req, res) => {
@@ -53,4 +53,13 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { login };
+const signup = async(req,res)=>{
+  try {
+    const value = req.body;
+    await user_signup_repository(value);
+    return res.status(StatusCodes.OK).json({message:"Signup Successfully",data:{}})
+  } catch (error) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({error:error,data:{}});
+  }
+}
+module.exports = { login,signup };

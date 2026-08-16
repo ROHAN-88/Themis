@@ -1,4 +1,5 @@
 const express = require("express");
+const bcrypt= require ("bcrypt")
 const { StatusCodes } = require("http-status-codes");
 const db = require("../config/db");
 
@@ -9,4 +10,11 @@ const user_login = async (email) => {
   return user_detail.rows[0];
 };
 
-module.exports = { user_login };
+const user_signup_repository = async (values)=>{
+const {name,email,password,phoneno}=values;
+
+const query = `INSERT INTO users(name,email,password,phoneno) VALUES ($1,$2,$3,$4)`;
+const password_encrypt = await bcrypt.hash(password,8); 
+await db.query(query,[name,email,password_encrypt,phoneno]);
+}
+module.exports = { user_login ,user_signup_repository};

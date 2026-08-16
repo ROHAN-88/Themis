@@ -10,6 +10,8 @@ const { boolean } = require("joi");
 const task_getall_controller = async (req, res) => {
   try {
     const tasks_detail = await task_repository.get_all_task();
+
+    
     return res
       .status(StatusCodes.OK)
       .json({ message: "Query Successfully", data: tasks_detail });
