@@ -1,11 +1,9 @@
-import { Navbar } from "./navbar/header";
-
+import {Pattern} from "./kanban/TaskKanban"
 function App() {
-  return (
-    <>
-      <Navbar />
-    </>
-  );
+  return <>
+  
+  <Pattern/>
+  </>;
 }
 
 export default App;
