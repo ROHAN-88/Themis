@@ -12,7 +12,6 @@ const insertUser = async ({
 }) => {
   const query = `INSERT INTO users(name,email,password,phoneno,address,age,gender)VALUES ($1, $2, $3, $4, $5, $6,$7)`;
   const password_encrypt = await bcrypt.hash(password, 8);
-  console.log(password_encrypt);
   const { rows } = await db.query(query, [
     name,
     email,

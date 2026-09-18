@@ -6,7 +6,12 @@ const task_board_Schema = joi.object({
   priority: joi.string().required(),
   created_by: joi.string(),
   assignee_to: joi.string().allow(" "),
+  task_type: joi.string,
   status: joi.string().required(),
 });
 
-module.exports = task_board_Schema;
+const task_type_Schema = joi.object({
+  title: joi.string().required(),
+  color: joi.string(),
+});
+module.exports = { task_board_Schema, task_type_Schema };
