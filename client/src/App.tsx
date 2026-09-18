@@ -1,9 +1,12 @@
-import {Pattern} from "./kanban/TaskKanban"
+import { Outlet } from "react-router";
+import { Navbar } from "./navbar/header";
 function App() {
-  return <>
-  
-  <Pattern/>
-  </>;
+  return (
+    <>
+      <Navbar />
+      <Outlet />
+    </>
+  );
 }
 
 export default App;

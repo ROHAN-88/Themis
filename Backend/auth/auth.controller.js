@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const { StatusCodes } = require("http-status-codes");
 const { user_login, user_signup_repository } = require("./auth.repository");
 const { user_login_schema } = require("./auth.validation");
+const { contains_emoji } = require("../utils/emoji.checker");
 
 const login = async (req, res) => {
   const user_login_body = req.body;
@@ -40,7 +41,7 @@ const login = async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-    return res.status(200).json({
+    return res.status(StatusCodes.OK).json({
       message: "Logged Successfully",
       data: {
         id: user_detail.id,
@@ -53,13 +54,24 @@ const login = async (req, res) => {
   }
 };
 
-const signup = async(req,res)=>{
+const signup = async (req, res) => {
   try {
+    console.log("je;;p");
     const value = req.body;
+    console.log(contains_emoji(value.name));
+    if (contains_emoji(value.name) || contains_emoji(value.password)) {
+      return res
+        .status(StatusCodes.NOT_ACCEPTABLE)
+        .json({ message: "Name cannot contain emoji" });
+    }
     await user_signup_repository(value);
-    return res.status(StatusCodes.OK).json({message:"Signup Successfully",data:{}})
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: "Signup Successfully", data: {} });
   } catch (error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({error:error,data:{}});
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message || error, data: {} });
   }
-}
-module.exports = { login,signup };
+};
+module.exports = { login, signup };

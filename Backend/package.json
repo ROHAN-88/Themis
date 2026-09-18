@@ -8,8 +8,7 @@
     "migration:up": "node-pg-migrate up",
     "migration:down": "node-pg-migrate down",
     "migrate:redo": "node-pg-migrate redo",
-    "migrate:create": "node-pg-migrate create --migration-file-language sql",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "migrate:create": "node-pg-migrate create --migration-file-language sql"
   },
   "keywords": [],
   "author": "",
@@ -28,6 +27,8 @@
     "pg-promise": "^12.7.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.2.0",
     "nodemon": "^3.1.14"
   }
 }

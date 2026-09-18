@@ -19,7 +19,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import type { Task } from "@/types/taskKanbantype";
 import { GripVerticalIcon } from "lucide-react";
 
-
 const COLUMN_TITLES: Record<string, string> = {
   backlog: "Backlog",
   inProgress: "In Progress",
@@ -211,10 +210,9 @@ export function Pattern() {
     >
       <KanbanBoard className="grid auto-rows-fr grid-cols-3">
         {Object.entries(columns).map(([columnValue, tasks]) => (
-
-<>
-<TaskColumn key={columnValue} value={columnValue} tasks={tasks} />
-</>
+          <>
+            <TaskColumn key={columnValue} value={columnValue} tasks={tasks} />
+          </>
         ))}
       </KanbanBoard>
       <KanbanOverlay className="bg-muted/10 rounded-md border-2 border-dashed" />
