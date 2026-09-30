@@ -1,3 +1,4 @@
+import { login_api } from "@/apis/auth/auth.api";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,16 +9,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Formik, Form, Field } from "formik";
+import { FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/toast";
+import type { login_types } from "@/types/auth/login";
+import { Form, Formik } from "formik";
+//,email,password,phoneno
 
-interface MyFormValues {
-  firstName: string;
-}
 export default function Login() {
-  const initialValues: MyFormValues = { firstName: "" };
+  const initialValues: login_types = { email: "", password: "" };
+
   return (
-    <div>
-      <Card className="w-full max-w-sm">
+    <div className="w-full h-screen flex justify-center items-center">
+      <Card className="w-full max-w-sm rounded-xl">
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
           <CardDescription>
@@ -30,28 +34,43 @@ export default function Login() {
         <CardContent>
           <Formik
             initialValues={initialValues}
-            onSubmit={(values, actions) => {
-              console.log({ values, actions });
-              alert(JSON.stringify(values, null, 2));
-              actions.setSubmitting(false);
+            onSubmit={async (values) => {
+              const login_response = await login_api(values);
+
+              if (login_response.success) {
+                toast.add({ type: "success", title: "Login in succesfull" });
+              } else {
+                toast.add({ type: "error", title: "Login Unscessfull" });
+              }
             }}
           >
             <Form>
-              <label htmlFor="firstName"> Email</label>
-              <Field id="firstName" name="firstName" placeholder="First Name" />
-              <button type="submit">Submit</button>
+              {/* <label htmlFor="email"> Name</label> */}
+              <div>
+                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <Input
+                  id="email"
+                  type="text"
+                  placeholder="Enter your username"
+                />
+              </div>
+              <div>
+                <FieldLabel htmlFor="password">password</FieldLabel>
+                <Input
+                  id="password"
+                  type="text"
+                  placeholder="Enter your password"
+                />
+              </div>
+
+              <CardFooter className="flex-col gap-2">
+                <Button type="submit" className="w-full">
+                  Login
+                </Button>
+              </CardFooter>
             </Form>
           </Formik>
         </CardContent>
-
-        <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full">
-            Login
-          </Button>
-          <Button variant="outline" className="w-full">
-            Login with Google
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   );
