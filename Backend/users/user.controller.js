@@ -30,7 +30,7 @@ const get_all_users = async (req, res) => {
   } catch (error) {
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json("Unexpected Error", error);
+      .json({ "Unexpected Error": error });
   }
 };
 

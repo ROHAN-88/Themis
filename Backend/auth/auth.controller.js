@@ -5,6 +5,8 @@ const { StatusCodes } = require("http-status-codes");
 const { user_login, user_signup_repository } = require("./auth.repository");
 const { user_login_schema } = require("./auth.validation");
 const { contains_emoji } = require("../utils/emoji.checker");
+const { findAllUsers } = require("../users/user.repository");
+const { error } = require("console");
 
 const login = async (req, res) => {
   const user_login_body = req.body;
@@ -50,20 +52,31 @@ const login = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(400).json({ message: "just testing", data: error });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Invalid Credential", data: error });
   }
 };
 
 const signup = async (req, res) => {
   try {
-    console.log("je;;p");
     const value = req.body;
-    console.log(contains_emoji(value.name));
     if (contains_emoji(value.name) || contains_emoji(value.password)) {
       return res
         .status(StatusCodes.NOT_ACCEPTABLE)
         .json({ message: "Name cannot contain emoji" });
     }
+    const user_data = await findAllUsers();
+
+    //CHECK if email exist
+    user_data.map((item, index) => {
+      if (item.email === value.email) {
+        return res
+          .status(StatusCodes.CONFLICT)
+          .json({ message: "Email already Exist" });
+      }
+    });
+
     await user_signup_repository(value);
     return res
       .status(StatusCodes.OK)
