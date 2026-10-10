@@ -27,9 +27,13 @@ const login = async (req, res) => {
     if (!bcrypt_pass)
       return res.status(StatusCodes.BAD_REQUEST).json("Invalid Credential");
 
-    const token = jwt.sign({ id: user_detail.id }, process.env.SECRET_KEY, {
-      expiresIn: "1h",
-    });
+    const access_token = jwt.sign(
+      { id: user_detail.id },
+      process.env.SECRET_KEY,
+      {
+        expiresIn: "1h",
+      },
+    );
     const refresh_token = jwt.sign(
       { id: user_detail.id, email: user_detail.email },
       process.env.REFRESH_SECRET_JWT_KEY,
@@ -43,12 +47,19 @@ const login = async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
+    // res.cookie("user_id", user_detail.id, {
+    //   httpOnly: true,
+    //   secure: true,
+    //   sameSite: "strict",
+    //   maxAge: 24 * 60 * 60 * 1000,
+    // });
+
     return res.status(StatusCodes.OK).json({
       message: "Logged Successfully",
       data: {
         id: user_detail.id,
         email: user_detail.email,
-        jwt_token: token,
+        jwt_token: access_token,
       },
     });
   } catch (error) {
@@ -87,4 +98,44 @@ const signup = async (req, res) => {
       .json({ error: error.message || error, data: {} });
   }
 };
-module.exports = { login, signup };
+
+const refresh_token_generator = async (req, res) => {
+  try {
+    const get_refreshtoken_cookies = req.cookies;
+    const { user_id } = req.body;
+    if (!get_refreshtoken_cookies && !user_id) {
+      return res
+        .status(StatusCodes.FORBIDDEN)
+        .json({ message: "Unauthorized" });
+    }
+    console.log("1");
+    jwt.verify(
+      get_refreshtoken_cookies.refreshToken,
+      process.env.REFRESH_SECRET_JWT_KEY,
+      async (error, decode) => {
+        console.log("2");
+        if (error) {
+          return res
+            .status(StatusCodes.BAD_REQUEST)
+            .json({ message: "Error", data: error });
+        } else {
+          const access_token = await jwt.sign(
+            { id: user_id },
+            process.env.SECRET_KEY,
+            {
+              expiresIn: "1h",
+            },
+          );
+
+          console.log(access_token);
+          return res.status(StatusCodes.OK).json({ jwt: access_token });
+        }
+      },
+    );
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Unexpected Error", error });
+  }
+};
+module.exports = { login, signup, refresh_token_generator };
