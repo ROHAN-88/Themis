@@ -1,5 +1,5 @@
 import App from "@/App";
-import { Pattern } from "@/kanban/TaskKanban";
+import TaskPage from "@/modules/tasksBoard/TaskPage";
 
 export const routers = [
   {
@@ -8,7 +8,7 @@ export const routers = [
     children: [
       {
         path: "task",
-        element: <Pattern />,
+        element: <TaskPage />,
       },
     ],
   },
