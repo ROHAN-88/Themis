@@ -5,8 +5,8 @@ const task_board_Schema = joi.object({
   description: joi.string().min(2).max(100),
   priority: joi.string().required(),
   created_by: joi.string(),
-  assignee_to: joi.string().allow(" "),
-  task_type: joi.string,
+  assignee_to: joi.string().allow("").optional(),
+  task_type: joi.string().allow("").optional(),
   status: joi.string().required(),
 });
 
